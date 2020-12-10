@@ -2,12 +2,9 @@
 
 module tetris(
     input wire        clk_too_fast,
-    input wire        btn_drop,
     input wire        btn_rotate,
     input wire        btn_left,
     input wire        btn_right,
-    input wire        btn_down,
-    input wire        sw_pause,
     input wire        sw_rst,
     output wire [7:0] rgb,
     output wire       hsync,
@@ -49,17 +46,10 @@ module tetris(
     // The enable signals for the five buttons, after
     // they have gone through the debouncer. Should only be high
     // for one cycle for each button press.
-    wire btn_drop_en;
     wire btn_rotate_en;
     wire btn_left_en;
     wire btn_right_en;
-    wire btn_down_en;
     // Debounce all of the input signals
-    debouncer debouncer_btn_drop_ (
-        .raw(btn_drop),
-        .clk(clk),
-        .enabled(btn_drop_en)
-    );
     debouncer debouncer_btn_rotate_ (
         .raw(btn_rotate),
         .clk(clk),
@@ -75,24 +65,11 @@ module tetris(
         .clk(clk),
         .enabled(btn_right_en)
     );
-    debouncer debouncer_btn_down_ (
-        .raw(btn_down),
-        .clk(clk),
-        .enabled(btn_down_en)
-    );
 
     // Sets up wires for the pause and reset switch enable
     // and disable signals, and debounces the asynchronous input.
-    wire sw_pause_en;
-    wire sw_pause_dis;
     wire sw_rst_en;
     wire sw_rst_dis;
-    debouncer debouncer_sw_pause_ (
-        .raw(sw_pause),
-        .clk(clk),
-        .enabled(sw_pause_en),
-        .disabled(sw_pause_dis)
-    );
     debouncer debouncer_sw_rst_ (
         .raw(sw_rst),
         .clk(clk),
@@ -160,7 +137,6 @@ module tetris(
     // The mode, used for finite state machine things. We also
     // need to store the old mode occasionally, like when we're paused.
     reg [`MODE_BITS-1:0] mode;
-    reg [`MODE_BITS-1:0] old_mode;
     // The game clock
     wire game_clk;
     // The game clock reset
@@ -192,8 +168,6 @@ module tetris(
         .btn_left_en(btn_left_en),
         .btn_right_en(btn_right_en),
         .btn_rotate_en(btn_rotate_en),
-        .btn_down_en(btn_down_en),
-        .btn_drop_en(btn_drop_en),
         .cur_pos_x(cur_pos_x),
         .cur_pos_y(cur_pos_y),
         .cur_rot(cur_rot),
@@ -427,21 +401,6 @@ module tetris(
             mode <= `MODE_RESET;
             add_to_fallen_pieces();
             cur_piece <= `EMPTY_BLOCK;
-
-
-        // REMOVING PAUSE
-        // end else if ((sw_pause_en || sw_pause_dis) && mode == `MODE_PLAY) begin
-        //     // If we switch on pause, save the old mode and enter
-        //     // the pause mode.
-        //     mode <= `MODE_PAUSE;
-        //     old_mode <= mode;
-
-
-
-        // end else if ((sw_pause_en || sw_pause_dis) && mode == `MODE_PAUSE) begin
-        //     // If we switch off pause, enter the old mode
-        //     mode <= old_mode;
-
         
         end else if (mode == `MODE_PLAY) begin
             // Normal gameplay
@@ -453,10 +412,6 @@ module tetris(
                 move_right();
             end else if (btn_rotate_en) begin
                 rotate();
-            end else if (btn_down_en) begin
-                move_down();
-            end else if (btn_drop_en && drop_timer == `DROP_TIMER_MAX) begin
-                drop_to_bottom();
             end else if (remove_row_en) begin
                 remove_row();
             end
