@@ -1,4 +1,4 @@
-module randomizer(
+module block_sequence(
     input wire       clk,
     output reg [1:0] random
     );

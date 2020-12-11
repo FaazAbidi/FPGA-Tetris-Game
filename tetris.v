@@ -38,7 +38,7 @@ module tetris(
     // of pieces at 100 MHz, and is selected based on user input,
     // making it effectively random.
     wire [`BITS_PER_BLOCK-1:0] random_piece;
-    randomizer randomizer_ (
+    block_sequence block_sequence_ (
         .clk(clk),
         .random(random_piece)
     );
@@ -401,6 +401,21 @@ module tetris(
             mode <= `MODE_RESET;
             add_to_fallen_pieces();
             cur_piece <= `EMPTY_BLOCK;
+
+
+        // REMOVING PAUSE
+        // end else if ((sw_pause_en || sw_pause_dis) && mode == `MODE_PLAY) begin
+        //     // If we switch on pause, save the old mode and enter
+        //     // the pause mode.
+        //     mode <= `MODE_PAUSE;
+        //     old_mode <= mode;
+
+
+
+        // end else if ((sw_pause_en || sw_pause_dis) && mode == `MODE_PAUSE) begin
+        //     // If we switch off pause, enter the old mode
+        //     mode <= old_mode;
+
         
         end else if (mode == `MODE_PLAY) begin
             // Normal gameplay
