@@ -57,7 +57,6 @@ module top_level_module(initail_clock,rotate,left,right,rst,rgb,hsync,vsync,seg)
     output wire [7:0] rgb;
     output wire       hsync;
     output wire       vsync;
-    output wire [7:0] seg;
 
     // clock divider
     reg clk_count;

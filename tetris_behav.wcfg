@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tetris_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="tetris" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="9fs"></ZoomEndTime>
+      <Cursor1Time time="0fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="151"></NameColumnWidth>
+      <ValueColumnWidth column_width="72"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="60" />
+   <wvobject fp_name="/tetris/clk_too_fast" type="logic">
+      <obj_property name="ElementShortName">clk_too_fast</obj_property>
+      <obj_property name="ObjectShortName">clk_too_fast</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/btn_drop" type="logic">
+      <obj_property name="ElementShortName">btn_drop</obj_property>
+      <obj_property name="ObjectShortName">btn_drop</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/btn_rotate" type="logic">
+      <obj_property name="ElementShortName">btn_rotate</obj_property>
+      <obj_property name="ObjectShortName">btn_rotate</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/btn_left" type="logic">
+      <obj_property name="ElementShortName">btn_left</obj_property>
+      <obj_property name="ObjectShortName">btn_left</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/btn_right" type="logic">
+      <obj_property name="ElementShortName">btn_right</obj_property>
+      <obj_property name="ObjectShortName">btn_right</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/btn_down" type="logic">
+      <obj_property name="ElementShortName">btn_down</obj_property>
+      <obj_property name="ObjectShortName">btn_down</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/sw_pause" type="logic">
+      <obj_property name="ElementShortName">sw_pause</obj_property>
+      <obj_property name="ObjectShortName">sw_pause</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/sw_rst" type="logic">
+      <obj_property name="ElementShortName">sw_rst</obj_property>
+      <obj_property name="ObjectShortName">sw_rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/rgb" type="array">
+      <obj_property name="ElementShortName">rgb[7:0]</obj_property>
+      <obj_property name="ObjectShortName">rgb[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/hsync" type="logic">
+      <obj_property name="ElementShortName">hsync</obj_property>
+      <obj_property name="ObjectShortName">hsync</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/vsync" type="logic">
+      <obj_property name="ElementShortName">vsync</obj_property>
+      <obj_property name="ObjectShortName">vsync</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/seg" type="array">
+      <obj_property name="ElementShortName">seg[7:0]</obj_property>
+      <obj_property name="ObjectShortName">seg[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/an" type="array">
+      <obj_property name="ElementShortName">an[3:0]</obj_property>
+      <obj_property name="ObjectShortName">an[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/clk_count" type="logic">
+      <obj_property name="ElementShortName">clk_count</obj_property>
+      <obj_property name="ObjectShortName">clk_count</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/drop_timer" type="array">
+      <obj_property name="ElementShortName">drop_timer[31:0]</obj_property>
+      <obj_property name="ObjectShortName">drop_timer[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/random_piece" type="array">
+      <obj_property name="ElementShortName">random_piece[2:0]</obj_property>
+      <obj_property name="ObjectShortName">random_piece[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/btn_drop_en" type="logic">
+      <obj_property name="ElementShortName">btn_drop_en</obj_property>
+      <obj_property name="ObjectShortName">btn_drop_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/btn_rotate_en" type="logic">
+      <obj_property name="ElementShortName">btn_rotate_en</obj_property>
+      <obj_property name="ObjectShortName">btn_rotate_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/btn_left_en" type="logic">
+      <obj_property name="ElementShortName">btn_left_en</obj_property>
+      <obj_property name="ObjectShortName">btn_left_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/btn_right_en" type="logic">
+      <obj_property name="ElementShortName">btn_right_en</obj_property>
+      <obj_property name="ObjectShortName">btn_right_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/btn_down_en" type="logic">
+      <obj_property name="ElementShortName">btn_down_en</obj_property>
+      <obj_property name="ObjectShortName">btn_down_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/sw_pause_en" type="logic">
+      <obj_property name="ElementShortName">sw_pause_en</obj_property>
+      <obj_property name="ObjectShortName">sw_pause_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/sw_pause_dis" type="logic">
+      <obj_property name="ElementShortName">sw_pause_dis</obj_property>
+      <obj_property name="ObjectShortName">sw_pause_dis</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/sw_rst_en" type="logic">
+      <obj_property name="ElementShortName">sw_rst_en</obj_property>
+      <obj_property name="ObjectShortName">sw_rst_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/sw_rst_dis" type="logic">
+      <obj_property name="ElementShortName">sw_rst_dis</obj_property>
+      <obj_property name="ObjectShortName">sw_rst_dis</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/fallen_pieces" type="array">
+      <obj_property name="ElementShortName">fallen_pieces[219:0]</obj_property>
+      <obj_property name="ObjectShortName">fallen_pieces[219:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/cur_piece" type="array">
+      <obj_property name="ElementShortName">cur_piece[2:0]</obj_property>
+      <obj_property name="ObjectShortName">cur_piece[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/cur_pos_x" type="array">
+      <obj_property name="ElementShortName">cur_pos_x[3:0]</obj_property>
+      <obj_property name="ObjectShortName">cur_pos_x[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/cur_pos_y" type="array">
+      <obj_property name="ElementShortName">cur_pos_y[4:0]</obj_property>
+      <obj_property name="ObjectShortName">cur_pos_y[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/cur_rot" type="array">
+      <obj_property name="ElementShortName">cur_rot[1:0]</obj_property>
+      <obj_property name="ObjectShortName">cur_rot[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/cur_blk_1" type="array">
+      <obj_property name="ElementShortName">cur_blk_1[7:0]</obj_property>
+      <obj_property name="ObjectShortName">cur_blk_1[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/cur_blk_2" type="array">
+      <obj_property name="ElementShortName">cur_blk_2[7:0]</obj_property>
+      <obj_property name="ObjectShortName">cur_blk_2[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/cur_blk_3" type="array">
+      <obj_property name="ElementShortName">cur_blk_3[7:0]</obj_property>
+      <obj_property name="ObjectShortName">cur_blk_3[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/cur_blk_4" type="array">
+      <obj_property name="ElementShortName">cur_blk_4[7:0]</obj_property>
+      <obj_property name="ObjectShortName">cur_blk_4[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/cur_width" type="array">
+      <obj_property name="ElementShortName">cur_width[2:0]</obj_property>
+      <obj_property name="ObjectShortName">cur_width[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/cur_height" type="array">
+      <obj_property name="ElementShortName">cur_height[2:0]</obj_property>
+      <obj_property name="ObjectShortName">cur_height[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/mode" type="array">
+      <obj_property name="ElementShortName">mode[2:0]</obj_property>
+      <obj_property name="ObjectShortName">mode[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/old_mode" type="array">
+      <obj_property name="ElementShortName">old_mode[2:0]</obj_property>
+      <obj_property name="ObjectShortName">old_mode[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/game_clk" type="logic">
+      <obj_property name="ElementShortName">game_clk</obj_property>
+      <obj_property name="ObjectShortName">game_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/game_clk_rst" type="logic">
+      <obj_property name="ElementShortName">game_clk_rst</obj_property>
+      <obj_property name="ObjectShortName">game_clk_rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/test_pos_x" type="array">
+      <obj_property name="ElementShortName">test_pos_x[3:0]</obj_property>
+      <obj_property name="ObjectShortName">test_pos_x[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/test_pos_y" type="array">
+      <obj_property name="ElementShortName">test_pos_y[4:0]</obj_property>
+      <obj_property name="ObjectShortName">test_pos_y[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/test_rot" type="array">
+      <obj_property name="ElementShortName">test_rot[1:0]</obj_property>
+      <obj_property name="ObjectShortName">test_rot[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/test_blk_1" type="array">
+      <obj_property name="ElementShortName">test_blk_1[7:0]</obj_property>
+      <obj_property name="ObjectShortName">test_blk_1[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/test_blk_2" type="array">
+      <obj_property name="ElementShortName">test_blk_2[7:0]</obj_property>
+      <obj_property name="ObjectShortName">test_blk_2[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/test_blk_3" type="array">
+      <obj_property name="ElementShortName">test_blk_3[7:0]</obj_property>
+      <obj_property name="ObjectShortName">test_blk_3[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/test_blk_4" type="array">
+      <obj_property name="ElementShortName">test_blk_4[7:0]</obj_property>
+      <obj_property name="ObjectShortName">test_blk_4[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/test_width" type="array">
+      <obj_property name="ElementShortName">test_width[2:0]</obj_property>
+      <obj_property name="ObjectShortName">test_width[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/test_height" type="array">
+      <obj_property name="ElementShortName">test_height[2:0]</obj_property>
+      <obj_property name="ObjectShortName">test_height[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/test_intersects" type="logic">
+      <obj_property name="ElementShortName">test_intersects</obj_property>
+      <obj_property name="ObjectShortName">test_intersects</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/score_1" type="array">
+      <obj_property name="ElementShortName">score_1[3:0]</obj_property>
+      <obj_property name="ObjectShortName">score_1[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/score_2" type="array">
+      <obj_property name="ElementShortName">score_2[3:0]</obj_property>
+      <obj_property name="ObjectShortName">score_2[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/score_3" type="array">
+      <obj_property name="ElementShortName">score_3[3:0]</obj_property>
+      <obj_property name="ObjectShortName">score_3[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/score_4" type="array">
+      <obj_property name="ElementShortName">score_4[3:0]</obj_property>
+      <obj_property name="ObjectShortName">score_4[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/remove_row_y" type="array">
+      <obj_property name="ElementShortName">remove_row_y[4:0]</obj_property>
+      <obj_property name="ObjectShortName">remove_row_y[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/remove_row_en" type="logic">
+      <obj_property name="ElementShortName">remove_row_en</obj_property>
+      <obj_property name="ObjectShortName">remove_row_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/shifting_row" type="array">
+      <obj_property name="ElementShortName">shifting_row[4:0]</obj_property>
+      <obj_property name="ObjectShortName">shifting_row[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/game_over" type="logic">
+      <obj_property name="ElementShortName">game_over</obj_property>
+      <obj_property name="ObjectShortName">game_over</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tetris/sw_reset" type="logic">
+      <obj_property name="ElementShortName">sw_reset</obj_property>
+      <obj_property name="ObjectShortName">sw_reset</obj_property>
+   </wvobject>
+</wave_config>
