@@ -1,109 +1,102 @@
-`include "definitions.vh"
+//Constants 
+`define PIXEL_WIDTH 640 //Size of the screen 
+`define PIXEL_HEIGHT 480 // Height of the screen
+`define BLOCK_SIZE 20
+`define BLOCKS_WIDE 10
+`define BLOCKS_HIGH 22
+`define new_generated_block_WIDTH (`BLOCKS_WIDE * `BLOCK_SIZE)
+`define new_generated_block_HEIGHT (`BLOCKS_HIGH * `BLOCK_SIZE)
+`define new_generated_block_X (((`PIXEL_WIDTH - `new_generated_block_WIDTH) / 2) - 1) 
+`define new_generated_block_Y (((`PIXEL_HEIGHT - `new_generated_block_HEIGHT) / 2) - 1)
+//(new_generated_block_X,new_generated_block_Y) is the starting position of the new_generated_block
+//TNumber of bots used for each staorage
+`define BITS_BLK_POS 8 // position of each block
+`define BITS_X_POS 4
+`define BITS_Y_POS 5
+`define BITS_ROT 2
+`define BITS_BLK_SIZE 3
+`define BITS_SCORE 14 //currently the score logic is incomplete
+`define BITS_PER_BLOCK 3
+// The type of each block
+`define EMPTY_BLOCK 3'b000
+`define I_BLOCK 3'b001
+`define O_BLOCK 3'b010
+`define T_BLOCK 3'b011
+`define S_BLOCK 3'b100
+`define Z_BLOCK 3'b101
+`define J_BLOCK 3'b110
+`define L_BLOCK 3'b111
+// Colors
+`define WHITE 8'b11111111
+`define BLACK 8'b00000000
+`define GRAY 8'b10100100
+`define CYAN 8'b11110000
+`define YELLOW 8'b00111111
+`define PURPLE 8'b11000111
+`define GREEN 8'b00111000
+`define RED 8'b00000111
+`define BLUE 8'b11000000
+`define ORANGE 8'b00011111
+// Error value
+`define ERR_BLK_POS 8'b11111111
+//main game state constant
+`define STATE_BITS 2
+`define STATE_PLAY 0
+`define STATE_DROP 3
+`define STATE_RESET 1
+`define STATE_RCOMPLETE 2
+`define DROP_TIMER_MAX 10000
 
-module tetris(
-    input wire        clk_too_fast,
-    input wire        btn_rotate,
-    input wire        btn_left,
-    input wire        btn_right,
-    input wire        sw_rst,
-    output wire [7:0] rgb,
-    output wire       hsync,
-    output wire       vsync,
-    output wire [7:0] seg,
-    output wire [3:0] an
-    );
 
-    // Divides the clock into 25 MHz
+module top_level_module(initail_clock,rotate,left,right,rst,rgb,hsync,vsync,seg);
+    input wire        initail_clock;
+    input wire        rotate;
+    input wire        left;
+    input wire        right;
+    input wire        rst;
+    output wire [7:0] rgb;
+    output wire       hsync;
+    output wire       vsync;
+    output wire [7:0] seg;
+
+    // clock divider
     reg clk_count;
     reg clk;
     initial begin
         clk_count = 0;
         clk = 0;
     end
-    always @ (posedge clk_too_fast) begin
+    always @ (posedge initail_clock) begin
         clk_count <= ~clk_count;
         if (clk_count) begin
             clk <= ~clk;
         end
     end
 
-    // Increments once per cycle to a maximum value. If this is
-    // not yet at the maximum value, we cannot go into drop mode.
-    reg [31:0] drop_timer;
+    reg [31:0] drop_timer; //helps is enabling the drop mode by reaching to max value
     initial begin
         drop_timer = 0;
     end
 
-    // This signal random_piece rotates between the types
-    // of pieces at 100 MHz, and is selected based on user input,
-    // making it effectively random.
-    wire [`BITS_PER_BLOCK-1:0] random_piece;
+    wire [`BITS_PER_BLOCK-1:0] new_generated_block;
     block_sequence block_sequence_ (
         .clk(clk),
-        .random(random_piece)
+        .random(new_generated_block)
     );
 
-    // The enable signals for the five buttons, after
-    // they have gone through the debouncer. Should only be high
-    // for one cycle for each button press.
-    wire btn_rotate_en;
-    wire btn_left_en;
-    wire btn_right_en;
-    // Debounce all of the input signals
-    debouncer debouncer_btn_rotate_ (
-        .raw(btn_rotate),
-        .clk(clk),
-        .enabled(btn_rotate_en)
-    );
-    debouncer debouncer_btn_left_ (
-        .raw(btn_left),
-        .clk(clk),
-        .enabled(btn_left_en)
-    );
-    debouncer debouncer_btn_right_ (
-        .raw(btn_right),
-        .clk(clk),
-        .enabled(btn_right_en)
-    );
+    reg [219:0] board_matrix;
 
-    // Sets up wires for the pause and reset switch enable
-    // and disable signals, and debounces the asynchronous input.
-    wire sw_rst_en;
-    wire sw_rst_dis;
-    debouncer debouncer_sw_rst_ (
-        .raw(sw_rst),
-        .clk(clk),
-        .enabled(sw_rst_en),
-        .disabled(sw_rst_dis)
-    );
-
-    // A memory bank for storing 1 bit for each board position.
-    // If the fallen_pieces memory is 1, there is a block still that
-    // has not been removed from play. This is used to draw the board
-    // and to test for intersection with the falling piece.
-    reg [(`BLOCKS_WIDE*`BLOCKS_HIGH)-1:0] fallen_pieces;
-
-    // What type of piece the current falling tetromino is. The types
-    // are defined in definitions.vh.
     reg [`BITS_PER_BLOCK-1:0] cur_piece;
-    // The x position of the falling piece.
     reg [`BITS_X_POS-1:0] cur_pos_x;
-    // The y position of the falling piece.
     reg [`BITS_Y_POS-1:0] cur_pos_y;
-    // The current rotation of the falling piece (0 == 0 degrees, 1 == 90 degrees, etc)
     reg [`BITS_ROT-1:0] cur_rot;
-    // The four flattened locations of the current falling tetromino. Used to
-    // test for intersection, or add to fallen_pieces, etc.
     wire [`BITS_BLK_POS-1:0] cur_blk_1;
     wire [`BITS_BLK_POS-1:0] cur_blk_2;
     wire [`BITS_BLK_POS-1:0] cur_blk_3;
     wire [`BITS_BLK_POS-1:0] cur_blk_4;
-    // The width and height of the current shape of the tetromino, based on its
-    // type and rotation.
     wire [`BITS_BLK_SIZE-1:0] cur_width;
     wire [`BITS_BLK_SIZE-1:0] cur_height;
-    // Use a calc_cur_blk module to get the values of the wires above from
-    // the current position, type, and rotation of the falling tetromino.
+
     calc_cur_blk calc_cur_blk_ (
         .piece(cur_piece),
         .pos_x(cur_pos_x),
@@ -117,10 +110,6 @@ module tetris(
         .height(cur_height)
     );
 
-    // The VGA controller. We give it the type of tetromino (cur_piece)
-    // so that it knows the right color, and the four positions on the
-    // board that it covers. We also pass in fallen_pieces so that it can
-    // display the fallen tetromino squares in monochrome.
     vga_display display_ (
         .clk(clk),
         .cur_piece(cur_piece),
@@ -128,46 +117,34 @@ module tetris(
         .cur_blk_2(cur_blk_2),
         .cur_blk_3(cur_blk_3),
         .cur_blk_4(cur_blk_4),
-        .fallen_pieces(fallen_pieces),
+        .board_matrix(board_matrix),
         .rgb(rgb),
         .hsync(hsync),
         .vsync(vsync)
     );
 
-    // The mode, used for finite state machine things. We also
-    // need to store the old mode occasionally, like when we're paused.
-    reg [`MODE_BITS-1:0] mode;
-    // The game clock
+    reg [`STATE_BITS-1:0] mode;
     wire game_clk;
-    // The game clock reset
     reg game_clk_rst;
 
-    // This module outputs the game clock, which is when the clock
-    // that determines when the tetromino falls by itself.
     game_clock game_clock_ (
         .clk(clk),
         .rst(game_clk_rst),
-        .pause(mode != `MODE_PLAY),
+        .pause(mode != `STATE_PLAY),
         .game_clk(game_clk)
     );
 
-    // Set up some variables to test for intersection or off-screen-ness
-    // of the current piece if the user's current action were to be
-    // followed through. For example, if the user presses the left button,
-    // we test where the current piece would be if it was moved one to the
-    // left, i.e. x = x - 1.
     wire [`BITS_X_POS-1:0] test_pos_x;
     wire [`BITS_Y_POS-1:0] test_pos_y;
     wire [`BITS_ROT-1:0] test_rot;
-    // Combinational logic to determine what position/rotation we are testing.
-    // This has been hoisted out into a module so that the code is shorter.
+
     calc_test_pos_rot calc_test_pos_rot_ (
         .mode(mode),
         .game_clk_rst(game_clk_rst),
         .game_clk(game_clk),
-        .btn_left_en(btn_left_en),
-        .btn_right_en(btn_right_en),
-        .btn_rotate_en(btn_rotate_en),
+        .left(left),
+        .right(right),
+        .rotate(rotate),
         .cur_pos_x(cur_pos_x),
         .cur_pos_y(cur_pos_y),
         .cur_rot(cur_rot),
@@ -175,13 +152,14 @@ module tetris(
         .test_pos_y(test_pos_y),
         .test_rot(test_rot)
     );
-    // Set up the outputs for the calc_test_blk module
+
     wire [`BITS_BLK_POS-1:0] test_blk_1;
     wire [`BITS_BLK_POS-1:0] test_blk_2;
     wire [`BITS_BLK_POS-1:0] test_blk_3;
     wire [`BITS_BLK_POS-1:0] test_blk_4;
     wire [`BITS_BLK_SIZE-1:0] test_width;
     wire [`BITS_BLK_SIZE-1:0] test_height;
+
     calc_cur_blk calc_test_block_ (
         .piece(cur_piece),
         .pos_x(test_pos_x),
@@ -195,26 +173,23 @@ module tetris(
         .height(test_height)
     );
 
-    // This function checks whether its input block positions intersect
-    // with any fallen pieces.
-    function intersects_fallen_pieces;
+
+    function intersects_board_matrix;
         input wire [7:0] blk1;
         input wire [7:0] blk2;
         input wire [7:0] blk3;
         input wire [7:0] blk4;
         begin
-            intersects_fallen_pieces = fallen_pieces[blk1] ||
-                                       fallen_pieces[blk2] ||
-                                       fallen_pieces[blk3] ||
-                                       fallen_pieces[blk4];
+            intersects_board_matrix = board_matrix[blk1] ||
+                                       board_matrix[blk2] ||
+                                       board_matrix[blk3] ||
+                                       board_matrix[blk4];
         end
     endfunction
 
-    // This signal goes high when the test positions/rotations intersect with
-    // fallen blocks.
-    wire test_intersects = intersects_fallen_pieces(test_blk_1, test_blk_2, test_blk_3, test_blk_4);
 
-    // If the falling piece can be moved left, moves it left
+    wire test_intersects = intersects_board_matrix(test_blk_1, test_blk_2, test_blk_3, test_blk_4);
+
     task move_left;
         begin
             if (cur_pos_x > 0 && !test_intersects) begin
@@ -223,7 +198,6 @@ module tetris(
         end
     endtask
 
-    // If the falling piece can be moved right, moves it right
     task move_right;
         begin
             if (cur_pos_x + cur_width < `BLOCKS_WIDE && !test_intersects) begin
@@ -232,8 +206,6 @@ module tetris(
         end
     endtask
 
-    // Rotates the current block if it would not cause any part of the
-    // block to go off screen and would not intersect with any fallen blocks.
     task rotate;
         begin
             if (cur_pos_x + test_width <= `BLOCKS_WIDE &&
@@ -244,93 +216,63 @@ module tetris(
         end
     endtask
 
-    // Adds the current block to fallen_pieces
-    task add_to_fallen_pieces;
+    task add_to_board_matrix;
         begin
-            fallen_pieces[cur_blk_1] <= 1;
-            fallen_pieces[cur_blk_2] <= 1;
-            fallen_pieces[cur_blk_3] <= 1;
-            fallen_pieces[cur_blk_4] <= 1;
+            board_matrix[cur_blk_1] <= 1;
+            board_matrix[cur_blk_2] <= 1;
+            board_matrix[cur_blk_3] <= 1;
+            board_matrix[cur_blk_4] <= 1;
         end
     endtask
 
-    // Adds the given blocks to fallen_pieces, and
-    // chooses a new block for the user that appears
-    // at the top of the screen.
     task get_new_block;
         begin
-            // Reset the drop timer, can't drop until this is high enough
             drop_timer <= 0;
-            // Choose a new block for the user
-            cur_piece <= random_piece;
+            cur_piece <= new_generated_block;
             cur_pos_x <= (`BLOCKS_WIDE / 2) - 1;
             cur_pos_y <= 0;
             cur_rot <= 0;
-            // reset the game timer so the user has a full
-            // cycle before the block falls
             game_clk_rst <= 1;
         end
     endtask
 
-    // Moves the current piece down one, getting a new block if
-    // the piece would go off the board or intersect with another block.
     task move_down;
         begin
             if (cur_pos_y + cur_height < `BLOCKS_HIGH && !test_intersects) begin
                 cur_pos_y <= cur_pos_y + 1;
             end else begin
-                add_to_fallen_pieces();
+                add_to_board_matrix();
                 get_new_block();
             end
         end
     endtask
 
-    // Sets the mode to MODE_DROP, in which the current block will not respond
-    // to user input and it will move down at one cycle per second until it hits
-    // a block or the bottom of the board.
     task drop_to_bottom;
         begin
-            mode <= `MODE_DROP;
+            mode <= `STATE_DROP;
         end
     endtask
 
-    // The score register, increased by one when the user
-    // completes a row.
-    reg [3:0] score_1; // 1's place
-    reg [3:0] score_2; // 10's place
-    reg [3:0] score_3; // 100's place
-    reg [3:0] score_4; // 1000's place
-    // The 7-segment display module, which outputs the score
-    seg_display score_display_ (
-        .clk(clk),
-        .score_1(score_1),
-        .score_2(score_2),
-        .score_3(score_3),
-        .score_4(score_4),
-        .an(an),
-        .seg(seg)
-    );
-    // The module that determines which row, if any, is complete
-    // and needs to be removed and the score incremented
+    reg [3:0] score_1; 
+    reg [3:0] score_2; 
+    reg [3:0] score_3; 
+    reg [3:0] score_4; 
+    
     wire [`BITS_Y_POS-1:0] remove_row_y;
     wire remove_row_en;
     complete_row complete_row_ (
         .clk(clk),
-        .pause(mode != `MODE_PLAY),
-        .fallen_pieces(fallen_pieces),
+        .pause(mode != `STATE_PLAY),
+        .board_matrix(board_matrix),
         .row(remove_row_y),
         .enabled(remove_row_en)
     );
 
-    // This task removes the completed row from fallen_pieces
-    // and increments the score
     reg [`BITS_Y_POS-1:0] shifting_row;
     task remove_row;
         begin
-            // Shift away remove_row_y
-            mode <= `MODE_RCOMPLETE;
+            mode <= `STATE_RCOMPLETE;
             shifting_row <= remove_row_y;
-            // Increment the score
             if (score_1 == 9) begin
                 if (score_2 == 9) begin
                     if (score_3 == 9) begin
@@ -355,10 +297,9 @@ module tetris(
         end
     endtask
 
-    // Initialize any registers we need
     initial begin
-        mode = `MODE_RESET;
-        fallen_pieces = 0;
+        mode = `STATE_RESET;
+        board_matrix = 0;
         cur_piece = `EMPTY_BLOCK;
         cur_pos_x = 0;
         cur_pos_y = 0;
@@ -369,11 +310,10 @@ module tetris(
         score_4 = 0;
     end
 
-    // Starts a new game after a button is pressed in the MODE_RESET state
     task start_game;
         begin
-            mode <= `MODE_PLAY;
-            fallen_pieces <= 0;
+            mode <= `STATE_PLAY;
+            board_matrix <= 0;
             score_1 <= 0;
             score_2 <= 0;
             score_3 <= 0;
@@ -382,70 +322,43 @@ module tetris(
         end
     endtask
 
-    // Determine if the game is over because the current position
-    // intersects with a fallen block
-    wire game_over = cur_pos_y == 0 && intersects_fallen_pieces(cur_blk_1, cur_blk_2, cur_blk_3, cur_blk_4);
+    wire game_over = cur_pos_y == 0 && intersects_board_matrix(cur_blk_1, cur_blk_2, cur_blk_3, cur_blk_4);
 
-    // Main game logic
     always @ (posedge clk) begin
         if (drop_timer < `DROP_TIMER_MAX) begin
             drop_timer <= drop_timer + 1;
         end
         game_clk_rst <= 0;
-        if (mode == `MODE_RESET && (sw_rst_en || sw_rst_dis)) begin
-            // We are in reset mode and the user has requested to start the game
+        if (mode == `STATE_RESET && (rst_en || rst_dis)) begin
             start_game();
-        end else if (sw_rst_en || sw_rst_dis || game_over) begin
-            // We hit the reset switch or the game ended by itself,
-            // go into reset mode where we wait for the user to press a button
-            mode <= `MODE_RESET;
-            add_to_fallen_pieces();
+        end else if (rst_en || rst_dis || game_over) begin
+            mode <= `STATE_RESET;
+            add_to_board_matrix();
             cur_piece <= `EMPTY_BLOCK;
-
-
-        // REMOVING PAUSE
-        // end else if ((sw_pause_en || sw_pause_dis) && mode == `MODE_PLAY) begin
-        //     // If we switch on pause, save the old mode and enter
-        //     // the pause mode.
-        //     mode <= `MODE_PAUSE;
-        //     old_mode <= mode;
-
-
-
-        // end else if ((sw_pause_en || sw_pause_dis) && mode == `MODE_PAUSE) begin
-        //     // If we switch off pause, enter the old mode
-        //     mode <= old_mode;
-
-        
-        end else if (mode == `MODE_PLAY) begin
-            // Normal gameplay
+        end else if (mode == `STATE_PLAY) begin
             if (game_clk) begin
                 move_down();
-            end else if (btn_left_en) begin
+            end else if (left) begin
                 move_left();
-            end else if (btn_right_en) begin
+            end else if (right) begin
                 move_right();
-            end else if (btn_rotate_en) begin
+            end else if (rotate) begin
                 rotate();
             end else if (remove_row_en) begin
                 remove_row();
             end
-        end else if (mode == `MODE_DROP) begin
-            // We are dropping the block until we hit respawn
-            // at the top
+        end else if (mode == `STATE_DROP) begin
             if (game_clk_rst && !sw_pause_en) begin
-                mode <= `MODE_PLAY;
+                mode <= `STATE_PLAY;
             end else begin
                 move_down();
             end
-        end else if (mode == `MODE_RCOMPLETE) begin
-            // We are shifting the row above shifting_row
-            // into shifting_row's position
+        end else if (mode == `STATE_RCOMPLETE) begin
             if (shifting_row == 0) begin
-                fallen_pieces[0 +: `BLOCKS_WIDE] <= 0;
-                mode <= `MODE_PLAY;
+                board_matrix[0 +: `BLOCKS_WIDE] <= 0;
+                mode <= `STATE_PLAY;
             end else begin
-                fallen_pieces[shifting_row*`BLOCKS_WIDE +: `BLOCKS_WIDE] <= fallen_pieces[(shifting_row - 1)*`BLOCKS_WIDE +: `BLOCKS_WIDE];
+                board_matrix[shifting_row*`BLOCKS_WIDE +: `BLOCKS_WIDE] <= board_matrix[(shifting_row - 1)*`BLOCKS_WIDE +: `BLOCKS_WIDE];
                 shifting_row <= shifting_row - 1;
             end
         end
