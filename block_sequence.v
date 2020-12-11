@@ -6,9 +6,6 @@ module block_sequence(
     initial begin
         random = 1;
     end
-
-    // Cycle through values at 100 MHz and select one
-    // at user input, which is effectively random.
     always @ (posedge clk) begin
         if (random == 0) begin
             random <= 1;
